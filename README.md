@@ -10,7 +10,7 @@
 
 1、git clone 本项目 或者直接下载项目中编译好的http-listen.exe 到你的Windows计算机上面。
 
-2、在Windows主机或者服务器的命令行模式下直接运行 http-listen.exe -l 10082，这里的“-l”参数表示你需要监听的端口号，不加的话默认是10082，出现了http-listn的logo后表示监听成功。
+2、在Windows主机或者服务器的命令行模式下直接运行 http-listen.exe -l 10082，这里的“-l”参数表示你需要监听的端口号，不加的话默认是10082，出现了http-listen的logo后表示监听成功。
 
       
       httplisten
