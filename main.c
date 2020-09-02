@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <winsock.h>
 #include "buf.h"
+#include "arg.h"
 
 /* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
@@ -12,10 +13,20 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in addr;
 	struct buf_t bufx;
 	char buf[512],*p=NULL,*q=NULL,*str=NULL;
-	int m=0,n=0,head_len=0,content_len=0,str_len=0,addr_size=sizeof(struct sockaddr);
+	int i=0,m=0,n=0,head_len=0,content_len=0,str_len=0,addr_size=sizeof(struct sockaddr);
+	short listen_port=10082;
+	struct arg_t arg;
+	char c;
 	
 	
 	buf_init(&bufx);
+	arg_init(&arg,argc,argv);
+	
+	p=arg_get_value(&arg,"-l");
+	
+	if(NULL!=p){
+		listen_port=atoi(p);
+	}
 	
 	if(0!=WSAStartup(MAKEWORD(2,0),&wsaData)){
 		perror("WSAStartup() error");
@@ -31,19 +42,33 @@ int main(int argc, char *argv[]) {
 	
 	addr.sin_family=AF_INET;
 	addr.sin_addr.s_addr=htonl(INADDR_ANY);
-	addr.sin_port=htons(10082);
+	addr.sin_port=htons(listen_port);
 	
 	if(0!=bind(listen_fd,(struct sockaddr*)&addr,sizeof(addr))){
 		perror("bind() error");
 		return EXIT_FAILURE;
 	}
 	
-	if(0!=listen(listen_fd,200)){
+	if(0!=listen(listen_fd,128)){
 		perror("listen() error");
 		return EXIT_FAILURE;
 	}
 	
-	printf("Listening on port:%d\n\n",10082);
+	printf("      ___                                   ___                                   ___                       ___           ___     \n");
+	printf("     /__/\\          ___         ___        /  /\\                    ___          /  /\\          ___        /  /\\         /__/\\    \n");
+	printf("     \\  \\:\\        /  /\\       /  /\\      /  /::\\                  /  /\\        /  /:/_        /  /\\      /  /:/_        \\  \\:\\ \n");
+	printf("      \\__\\:\\      /  /:/      /  /:/     /  /:/\\:\\  ___     ___   /  /:/       /  /:/ /\\      /  /:/     /  /:/ /\\        \\  \\:\\  \n");
+	printf("  ___ /  /::\\    /  /:/      /  /:/     /  /:/~/:/ /__/\\   /  /\\ /__/::\\      /  /:/ /::\\    /  /:/     /  /:/ /:/_   _____\\__\\:\\ \n");
+	printf(" /__/\\  /:/\\:\\  /  /::\\     /  /::\\    /__/:/ /:/  \\  \\:\\ /  /:/ \\__\\/\\:\\__  /__/:/ /:/\\:\\  /  /::\\    /__/:/ /:/ /\\ /__/::::::::\\\n");
+	printf(" \\  \\:\\/:/__\\/ /__/:/\\:\\   /__/:/\\:\\   \\  \\:\\/:/    \\  \\:\\  /:/     \\  \\:\\/\\ \\  \\:\\/:/~/:/ /__/:/\\:\\   \\  \\:\\/:/ /:/ \\  \\:\\~~\\~~\\/\n");
+	printf("  \\  \\::/      \\__\\/  \\:\\  \\__\\/  \\:\\   \\  \\::/      \\  \\:\\/:/       \\__\\::/  \\  \\::/ /:/  \\__\\/  \\:\\   \\  \\::/ /:/   \\  \\:\\  ~~~ \n");
+	printf("   \\  \\:\\           \\  \\:\\      \\  \\:\\   \\  \\:\\       \\  \\::/        /__/:/    \\__\\/ /:/        \\  \\:\\   \\  \\:\\/:/     \\  \\:\\     \n");
+	printf("    \\  \\:\\           \\__\\/       \\__\\/    \\  \\:\\       \\__\\/         \\__\\/       /__/:/          \\__\\/    \\  \\::/       \\  \\:\\    \n");
+	printf("     \\__\\/                                 \\__\\/                                 \\__\\/                     \\__\\/         \\__\\/    \n");
+	printf("\n");
+	printf("Listening on port:%d\n\n",listen_port);
+	
+	fflush(stdout);
 	
 	for(;;){
 		conn_fd=accept(listen_fd,(struct sockaddr*)&addr,&addr_size);
@@ -53,7 +78,7 @@ int main(int argc, char *argv[]) {
 			continue;
 		}
 		
-		printf("A new connection %s:%d\n",inet_ntoa(addr.sin_addr),ntohs(addr.sin_port));
+		printf("===========================================\nA new connection %s:%d\n===========================================\n",inet_ntoa(addr.sin_addr),ntohs(addr.sin_port));
 		
 		for(;;){
 			n=recv(conn_fd,buf,sizeof(buf),0);
@@ -67,7 +92,7 @@ int main(int argc, char *argv[]) {
 			buf_push(&bufx,buf,n);
 			buf_to_str(&bufx);
 			str=buf_get_head(&bufx);
-			str_len=strlen(str);
+			str_len=buf_get_length(&bufx);
 			p=strstr(str,"\r\n\r\n");
 			
 			//当前缓冲区中没有找到head分隔符 ,继续接收 
@@ -75,9 +100,13 @@ int main(int argc, char *argv[]) {
 				continue;
 			}
 			
-			head_len=p-str+3;//头部字符个数 
-			
+			head_len=p-str+4;//头部字符个数 
+			c=str[head_len];
+			str[head_len]='\0';
+			printf("%s",str);
+			fflush(stdout);
 			p=strstr(str,"Content-Length: ");
+			str[head_len]=c;
 			
 			//存在内容长度字段 
 			if(p!=NULL){
@@ -96,32 +125,38 @@ int main(int argc, char *argv[]) {
 				if(str_len-head_len < content_len){
 					
 					m=content_len-(str_len-head_len);
+					n=0;
+					i=0;
 					
 					for(;;){
 						
-						n=recv(conn_fd,buf,m,0);
+						i=recv(conn_fd,buf,sizeof(buf)-1,0);
 						
-						if(n<=0){
+						if(i<=0){
 							break;
 						}
 						
-						buf_push(&bufx,buf,n);
+						buf[i]='\0';
+						printf("%s",buf);
+						n+=i;
 						
 						if(n>=m){
 							break;
 						}
 						
 					}
+				}else{
+					printf("%s",str+head_len);
 				}
 				
-				buf_to_str(&bufx);
 			} 
 			
 			break;
 			
 		}
-		
-		printf("%s\n",str);
+	
+		printf("\n");
+		fflush(stdout);
 		buf_reset(&bufx);
 		
 		//回应一个http响应
@@ -136,7 +171,8 @@ int main(int argc, char *argv[]) {
 		send(conn_fd,buf,strlen(buf),0); 
 		closesocket(conn_fd);
 	}
-		
+	
+	buf_destroy(&bufx);	
 	closesocket(listen_fd);
 	return 0;
 }
