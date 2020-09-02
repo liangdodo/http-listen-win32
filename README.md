@@ -9,38 +9,28 @@
 使用方法：
 1、git clone 本项目 或者直接下载项目中编译好的http-listen.exe 到你的Windows计算机上面。
 
-2、在Windows主机或者服务器的命令行模式下直接运行 http-listen.exe -l 10082，这里的“-l”参数表示你需要监听的端口号，不加的话默认是10082，出现了如下logo后表示监听成功。
+2、在Windows主机或者服务器的命令行模式下直接运行 http-listen.exe -l 10082，这里的“-l”参数表示你需要监听的端口号，不加的话默认是10082，出现了http-listn的logo后表示监听成功。
 
-      ___                                   ___                                   ___                       ___           ___
-     /__/\          ___         ___        /  /\                    ___          /  /\          ___        /  /\         /__/\
-     \  \:\        /  /\       /  /\      /  /::\                  /  /\        /  /:/_        /  /\      /  /:/_        \  \:\
-      \__\:\      /  /:/      /  /:/     /  /:/\:\  ___     ___   /  /:/       /  /:/ /\      /  /:/     /  /:/ /\        \  \:\
-  ___ /  /::\    /  /:/      /  /:/     /  /:/~/:/ /__/\   /  /\ /__/::\      /  /:/ /::\    /  /:/     /  /:/ /:/_   _____\__\:\
- /__/\  /:/\:\  /  /::\     /  /::\    /__/:/ /:/  \  \:\ /  /:/ \__\/\:\__  /__/:/ /:/\:\  /  /::\    /__/:/ /:/ /\ /__/::::::::\
- \  \:\/:/__\/ /__/:/\:\   /__/:/\:\   \  \:\/:/    \  \:\  /:/     \  \:\/\ \  \:\/:/~/:/ /__/:/\:\   \  \:\/:/ /:/ \  \:\~~\~~\/
-  \  \::/      \__\/  \:\  \__\/  \:\   \  \::/      \  \:\/:/       \__\::/  \  \::/ /:/  \__\/  \:\   \  \::/ /:/   \  \:\  ~~~
-   \  \:\           \  \:\      \  \:\   \  \:\       \  \::/        /__/:/    \__\/ /:/        \  \:\   \  \:\/:/     \  \:\
-    \  \:\           \__\/       \__\/    \  \:\       \__\/         \__\/       /__/:/          \__\/    \  \::/       \  \:\
-     \__\/                                 \__\/                                 \__\/                     \__\/         \__\/
-
-Listening on port:10082
-
+      
+      httplisten
+      Listening on port:10082
+      
 
 3、通过任意HTTP客户端（如Postman,Chrome浏览器等）向你的主机或者域名发送请求，格式如"http://xxx.xxx.xxx.xxx:10082/xxxx" ，http-listen会打印出HTTP客户端的请求信息，内容如下：
 
-===========================================
-A new connection xxx.xxx.xxx.xxx:6936
-===========================================
-POST /pay/notify HTTP/1.1
-User-Agent: PostmanRuntime/7.26.3
-Accept: */*
-Cache-Control: no-cache
-Postman-Token: fde41b9c-74b9-4772-9cfa-3f6521f29eac
-Host: xxx.xxx.xxx.xxx:10082
-Accept-Encoding: gzip, deflate, br
-Connection: keep-alive
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 25
-
-sn=a251131515&uid=7755862
+    ===========================================
+    A new connection xxx.xxx.xxx.xxx:6936
+    ===========================================
+    POST /pay/notify HTTP/1.1
+    User-Agent: PostmanRuntime/7.26.3
+    Accept: */*
+    Cache-Control: no-cache
+    Postman-Token: fde41b9c-74b9-4772-9cfa-3f6521f29eac
+    Host: xxx.xxx.xxx.xxx:10082
+    Accept-Encoding: gzip, deflate, br
+    Connection: keep-alive
+    Content-Type: application/x-www-form-urlencoded
+    Content-Length: 25
+    
+    sn=a251131515&uid=7755862
 
