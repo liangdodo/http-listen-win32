@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
 	short listen_port=10082;
 	struct arg_t arg;
 	char c;
+	int option_val=1;
 	
 	
 	buf_init(&bufx);
@@ -44,6 +45,16 @@ int main(int argc, char *argv[]) {
 	addr.sin_addr.s_addr=htonl(INADDR_ANY);
 	addr.sin_port=htons(listen_port);
 	
+	if(0!=setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR,(const void *)&option_val , sizeof(option_val))){
+		perror("setsockopt() SO_REUSEADDR");
+		return 	EXIT_FAILURE;
+	}
+	
+/*	if(0!=setsockopt(listen_fd, SOL_SOCKET, SO_REUSEPORT,(const void *)&option_val , sizeof(option_val))){
+		perror("setsockopt() SO_REUSEPORT");
+		return 	EXIT_FAILURE;
+	}
+	*/
 	if(0!=bind(listen_fd,(struct sockaddr*)&addr,sizeof(addr))){
 		perror("bind() error");
 		return EXIT_FAILURE;
@@ -101,12 +112,12 @@ int main(int argc, char *argv[]) {
 			}
 			
 			head_len=p-str+4;//头部字符个数 
-			c=str[head_len];
-			str[head_len]='\0';
+			//c=str[head_len];
+			//str[head_len]='\0';
 			printf("%s",str);
 			fflush(stdout);
 			p=strstr(str,"Content-Length: ");
-			str[head_len]=c;
+			//str[head_len]=c;
 			
 			//存在内容长度字段 
 			if(p!=NULL){
